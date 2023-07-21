@@ -1,0 +1,17 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+_bkp
+1_raw
+2_corrected
+3_logs
+4_plots
+ext_data
+iBite_force_measurements_combined.csv
+iBite_table.csv
+iBite_table_for_zenodo_description.csv
+workspaces
+.Rdata
+.httr-oauth
+.DS_Store
