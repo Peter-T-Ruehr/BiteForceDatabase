@@ -93,14 +93,6 @@ iBite.table <- left_join(iBite.table, HemiHolo.order.fit, by = "order") %>%
          "latitude", "longitude", "country") %>% 
   arrange(HemiHolo, infraclass, cohort, order, suborder, superfamily, family, subfamily, tribe, genus, species)
 
-# get order, family, species, specimen and measurement (=iBite) numbers
-length(unique(iBite.table$order))
-length(unique(iBite.table$family)) # (-1 because one family is unknown)
-length(unique(iBite.table$subfamily))
-length(unique(iBite.table$genus))
-length(unique(iBite.table$ID))
-length(unique(iBite.table$specimen))
-length(unique(iBite.table$iBite))
 
 # raw data plotting
 # load all raw measurements
@@ -928,4 +920,18 @@ iBite.table.reduced_iBite.save.zenodo <- iBite.table.reduced_iBite.save %>%
 # write Zenodo overview to file
 write_csv(iBite.table.reduced_iBite.save.zenodo, "./iBite_table_for_zenodo_description.csv") 
 
+
+# get size range for main text
+range(iBite.table$body.l)
 print("All finished!")
+
+# get coverage numbers for main text
+
+# get order, family, species, specimen and measurement (=iBite) numbers
+print(paste0("orders: ", length(unique(iBite.table$order))))
+print(paste0("families: ", length(unique(iBite.table$family)))) 
+print(paste0("subfamilies: ", length(unique(iBite.table$subfamily))))
+print(paste0("genera: ", length(unique(iBite.table$genus))))
+print(paste0("species: ", length(unique(iBite.table$ID))))
+print(paste0("speciemens: ", length(unique(iBite.table$specimen))))
+print(paste0("measurements: ", length(unique(iBite.table$iBite))))
