@@ -30,7 +30,7 @@
 ##
 ## ---------------------------
 
-plot_all_graphs = TRUE
+plot_all_graphs = FALSE # TRUE FALSE
 
 # define package list that is needed to run this script
 packages.needed <- c("report", "filesstrings", "scales", "parallel", "zen4R", "rotl", "kgc", "gridExtra", "viridis", "ggplot2", "plotly", "readxl", "gsheet", "tidyverse", "forceR")
@@ -117,7 +117,7 @@ measurements <- unique(raw.measurements.200$filename)
 
 # define path for plots
 plot.path <- "./4_plots"
-plot.path <- "C:/Users/pruehr.EVOLUTION/Documents/4_plots" # <- in case saving in server folder kills R
+# plot.path <- "C:/Users/pruehr.EVOLUTION/Documents/4_plots" # <- in case saving in server folder kills R
 
 
 if(plot_all_graphs == TRUE){
@@ -462,8 +462,7 @@ external.bf.data.meas <- read_xlsx("./ext_data/external_data.xlsx") %>%
 
 
 # body length; normal mean <- in supplement
-lin.eq.1 <- lm(log10(iBite.table.reduced_ID$mean.bf.ID) ~ log10(iBite.table.reduced_ID$mean.ID.body.l))
-summary(lin.eq.1)
+lin.eq.reg_bl <- lm(log10(iBite.table.reduced_ID$mean.bf.ID) ~ log10(iBite.table.reduced_ID$mean.ID.body.l))
 
 iBite.table.reduced_plot <- iBite.table.reduced_ID %>% # renaming so it fits ggplot but names are not accurate
   select(-c(mean.bf.specimen, body.l)) %>%
@@ -487,8 +486,7 @@ p1.body.l.hist.regular <- ggExtra::ggMarginal(p1, type = "histogram")
 
 
 # body length; geometric mean <- in Fig. 2 in main text
-lin.eq.1 <- lm(log10(iBite.table.reduced_ID$mean.bf.ID.geom) ~ log10(iBite.table.reduced_ID$mean.ID.body.l.geom))
-summary(lin.eq.1)
+lin.eq.geom_bl <- lm(log10(iBite.table.reduced_ID$mean.bf.ID.geom) ~ log10(iBite.table.reduced_ID$mean.ID.body.l.geom))
 
 iBite.table.reduced_plot <- iBite.table.reduced_ID %>% # renaming so it fits ggplot but names are not accurate
   select(-c(mean.bf.specimen, max.bf.specimen, body.l)) %>% 
@@ -512,11 +510,9 @@ p1.body.l.hist <- ggExtra::ggMarginal(p1.body.l, type = "histogram")
 # p1.body.l.hist
 
 
-
-
 # head width; normal mean <- in supplement
-lin.eq.1 <- lm(log10(iBite.table.reduced_ID$mean.bf.ID) ~ log10(iBite.table.reduced_ID$mean.ID.head.w))
-summary(lin.eq.1)
+lin.eq.reg_hw <- lm(log10(iBite.table.reduced_ID$mean.bf.ID) ~ log10(iBite.table.reduced_ID$mean.ID.head.w))
+
 
 iBite.table.reduced_plot <- iBite.table.reduced_ID %>% # renaming so it fits ggplot but names are not accurate
   select(-c(mean.bf.specimen, head.w)) %>%
@@ -542,8 +538,7 @@ p1.head.w.hist.regular <- ggExtra::ggMarginal(p1, type = "histogram")
 
 
 # head width; geometric mean <- in Fig. 2 in main text
-lin.eq.1 <- lm(log10(iBite.table.reduced_ID$mean.bf.ID.geom) ~ log10(iBite.table.reduced_ID$mean.ID.head.w.geom))
-summary(lin.eq.1)
+lin.eq.geom_hw <- lm(log10(iBite.table.reduced_ID$mean.bf.ID.geom) ~ log10(iBite.table.reduced_ID$mean.ID.head.w.geom))
 
 iBite.table.reduced_plot <- iBite.table.reduced_ID %>% # renaming so it fits ggplot but names are not accurate
   select(-c(mean.bf.specimen, max.bf.specimen, head.w)) %>% 
@@ -600,6 +595,33 @@ print(grid.arrange(p1.body.l.hist, p1.head.w.hist,
                    nrow = 2))
 dev.off()
 
+
+
+
+# create table with linear regression values of regular and geometric means
+regression_df <- tibble(mean_type = c("regular",
+                                      "regular",
+                                      "geometric",
+                                      "geometric"),
+                        x = c("body length",
+                              "head width",
+                              "body length",
+                              "head width"),
+                        p = c(summary(lin.eq.reg_bl)$coefficients[2,4],
+                              summary(lin.eq.reg_hw)$coefficients[2,4],
+                              summary(lin.eq.geom_bl)$coefficients[2,4],
+                              summary(lin.eq.geom_bl)$coefficients[2,4]),
+                        R2 = c(round(summary(lin.eq.reg_bl)$r.squared,2),
+                               round(summary(lin.eq.reg_hw)$r.squared,2),
+                               round(summary(lin.eq.geom_bl)$r.squared,2),
+                               round(summary(lin.eq.geom_hw)$r.squared,2)),
+                        adj_R2 = c(round(summary(lin.eq.reg_bl)$adj.r.squared,2),
+                                   round(summary(lin.eq.reg_hw)$adj.r.squared ,2),
+                                   round(summary(lin.eq.geom_bl)$adj.r.squared,2),
+                                   round(summary(lin.eq.geom_hw)$adj.r.squared,2)))
+
+regression_df$p[regression_df$p < 0.001] <- "<.001"
+regression_df
 
 # does database data share a common slope with external data, or do they show unique slopes?
 # unique allometric slopes: 
