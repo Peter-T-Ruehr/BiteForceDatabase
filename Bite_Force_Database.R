@@ -30,7 +30,7 @@
 ##
 ## ---------------------------
 
-plot_all_graphs = FALSE # TRUE FALSE
+plot_all_graphs = TRUE # TRUE FALSE
 
 # define package list that is needed to run this script
 packages.needed <- c("report", "filesstrings", "scales", "parallel", "zen4R", "rotl", "kgc", "gridExtra", "viridis", "ggplot2", "plotly", "readxl", "gsheet", "tidyverse", "forceR")
