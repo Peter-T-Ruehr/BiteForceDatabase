@@ -16,3 +16,5 @@ workspaces
 .httr-oauth
 .DS_Store
 BiteForceDatabase.zip
+BiteForceDatabase.zip.tmp
+InsectBiteForceDatabase_v1.0.0.zip
