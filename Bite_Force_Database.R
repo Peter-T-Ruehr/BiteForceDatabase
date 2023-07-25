@@ -33,7 +33,7 @@
 plot_all_graphs = TRUE # TRUE FALSE
 
 # define package list that is needed to run this script
-packages.needed <- c("report", "filesstrings", "scales", "parallel", "zen4R", "rotl", "kgc", "gridExtra", "viridis", "ggplot2", "plotly", "readxl", "gsheet", "tidyverse", "forceR")
+packages.needed <- c("filesstrings", "scales", "parallel", "zen4R", "rotl", "kgc", "gridExtra", "viridis", "ggplot2", "plotly", "readxl", "gsheet", "tidyverse", "forceR")
 
 # install missing packages
 new.packages <- packages.needed[!(packages.needed %in% installed.packages()[,"Package"])]
@@ -540,8 +540,8 @@ p1.head.w <- ggplot(data = iBite.table.reduced_specimen, aes(x = head.w,
                                                              y = max.bf.specimen)) +
   geom_point(cex = 1, pch = 16, color = "grey80", alpha = 1) +
   stat_smooth(method = "lm", alpha = 0.75) +
-  geom_point(data = iBite.table.reduced_plot, color = "black", cex = 1, pch = 16) + # viridis(n=1, begin=0.2)
-  geom_point(data = external.bf.data.meas, color = "orange", cex = 2, pch = 18) + # viridis(n=1, begin=0.2)
+  geom_point(data = iBite.table.reduced_plot, color = "black", cex = 1, pch = 16)
+  geom_point(data = external.bf.data.meas, color = "orange", cex = 2, pch = 18)
   scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
                 labels = trans_format("log10", math_format(10^.x))) +
   scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
@@ -635,7 +635,7 @@ unique <- lm(log10(external.and.iBite.data$mean.bf.geom) ~ log10(external.and.iB
 common <- lm(log10(external.and.iBite.data$mean.bf.geom) ~ log10(external.and.iBite.data$mean.head.w.geom) + external.and.iBite.data$source)
 
 # compare models
-anova(common, unique)
+anova_results <- anova(common, unique)
 
 # evaluate taxonomic coverage: Zhang 2011
 insect_numbers <- read_xlsx("./ext_data/Zhang_2011.xlsx")
@@ -704,7 +704,7 @@ p1.coverage.order <- ggplot(data = coverage.orders, aes(x = species.otl, y = n,
   theme_bw() +
   theme(legend.position = "none") +
   geom_segment(aes(x = 100, y = 1, xend = 10^4.5, yend = 10^4.5*(per.100/100)), linetype = "dashed", linewidth=1,
-                            inherit.aes = FALSE) +
+               inherit.aes = FALSE) +
   annotation_logticks()
 # p1.coverage.order
 
@@ -902,7 +902,7 @@ iBite.table.reduced_iBite.save <- iBite.table.reduced_iBite  %>%
 # save table for Zenodo
 write_csv(iBite.table.reduced_iBite.save, "./iBite_table.csv")
 
-# write table to clipboard copy table to clipboard with extended clipboard size
+# write table to clipboard with extended clipboard size and save as CSV
 seperator = "\t"
 write.table(iBite.table.reduced_iBite.save, file = "clipboard-16384", 
             sep = seperator, col.names = T, na = "", dec = ".", row.names = FALSE)
@@ -923,11 +923,8 @@ write_csv(iBite.table.reduced_iBite.save.zenodo, "./iBite_table_for_zenodo_descr
 
 # get size range for main text
 range(iBite.table$body.l)
-print("All finished!")
 
 # get coverage numbers for main text
-
-# get order, family, species, specimen and measurement (=iBite) numbers
 print(paste0("orders: ", length(unique(iBite.table$order))))
 print(paste0("families: ", length(unique(iBite.table$family)))) 
 print(paste0("subfamilies: ", length(unique(iBite.table$subfamily))))
@@ -935,3 +932,35 @@ print(paste0("genera: ", length(unique(iBite.table$genus))))
 print(paste0("species: ", length(unique(iBite.table$ID))))
 print(paste0("speciemens: ", length(unique(iBite.table$specimen))))
 print(paste0("measurements: ", length(unique(iBite.table$iBite))))
+
+# save regression_df with statistics as CSV
+write_csv(regression_df, "./4_plots/regression_statistics.csv") 
+
+# print anova results for main text
+print(anova_results)
+
+# finally, print package versions and citations for all packages used:
+packages_df <- tibble(package = "NA",
+                      version = "NA",
+                      citation = "NA",
+                      .rows = 0)
+
+packages.needed <- c(packages.needed, "dplyr")
+for(i in 1:length(packages.needed)){
+  curr_package = packages.needed[i]
+  curr_version <- as.character(packageVersion(curr_package))
+  curr_citation <- citation(curr_package) %>%  
+    format(style = "text", .bibstyle = NULL)
+  print(paste0(curr_package, ": ", curr_version))
+  packages_df <- packages_df %>% 
+    add_row(package = curr_package, 
+            version = curr_version,
+            citation = curr_citation)
+  print("************")
+
+}
+
+# save regression_df with statistics as CSV
+write_tsv(packages_df, "./4_plots/package_version_info.csv")
+
+print("All finished!")
