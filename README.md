@@ -16,6 +16,8 @@ The Zenodo folder that is automatically downloaded by the script is available at
 
 The Zenodo repository already contains all files that are produced by this script (mainly PDFs with plotted figures and the final database csv file 'iBite_table.csv'). Running this script will overwrite those files with the identical content again.
 
+The exact code to produce the database and manuscript is stored under release [1.0.0.](https://github.com/Peter-T-Ruehr/InsectBiteForceDatabase/releases/tag/v1.0.0).
+
 ## References
 
 [1] <https://www.rstudio.com/>
