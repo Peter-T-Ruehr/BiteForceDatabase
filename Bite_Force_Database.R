@@ -31,6 +31,10 @@
 ## ---------------------------
 
 plot_all_graphs = TRUE # TRUE FALSE
+# define path for plots
+# plot.path <- "./4_plots"
+plot.path <- "C:/Users/pruehr.EVOLUTION/Documents/4_plots" # <- in case saving in server folder kills R
+
 
 # define package list that is needed to run this script
 packages.needed <- c("filesstrings", "scales", "parallel", "zen4R", "rotl", "kgc", "gridExtra", "viridis", "ggplot2", "plotly", "readxl", "gsheet", "tidyverse", "forceR")
@@ -94,6 +98,12 @@ iBite.table <- left_join(iBite.table, HemiHolo.order.fit, by = "order") %>%
   arrange(HemiHolo, infraclass, cohort, order, suborder, superfamily, family, subfamily, tribe, genus, species)
 
 
+# create tibble with rank, specimen, and iBite numbers
+measured_df <- tibble(rank = "NA",
+                      number = 10000,
+                      .rows = 0)
+
+
 # raw data plotting
 # load all raw measurements
 raw.measurements <- load_mult("./1_raw",
@@ -106,11 +116,6 @@ raw.measurements.200 <- reduce_frq(raw.measurements,
 
 # get unique measurement names
 measurements <- unique(raw.measurements.200$filename)
-
-# define path for plots
-plot.path <- "./4_plots"
-# plot.path <- "C:/Users/pruehr.EVOLUTION/Documents/4_plots" # <- in case saving in server folder kills R
-
 
 if(plot_all_graphs == TRUE){
   # create plot folder folder if it does not yet exist
@@ -540,8 +545,8 @@ p1.head.w <- ggplot(data = iBite.table.reduced_specimen, aes(x = head.w,
                                                              y = max.bf.specimen)) +
   geom_point(cex = 1, pch = 16, color = "grey80", alpha = 1) +
   stat_smooth(method = "lm", alpha = 0.75) +
-  geom_point(data = iBite.table.reduced_plot, color = "black", cex = 1, pch = 16)
-  geom_point(data = external.bf.data.meas, color = "orange", cex = 2, pch = 18)
+  geom_point(data = iBite.table.reduced_plot, color = "black", cex = 1, pch = 16) +
+  geom_point(data = external.bf.data.meas, color = "orange", cex = 2, pch = 18) +
   scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
                 labels = trans_format("log10", math_format(10^.x))) +
   scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
@@ -660,7 +665,7 @@ coverage.orders <- coverage.orders %>%
          HemiHolo = factor(HemiHolo, levels = c("Hemimetabola", "Holometabola"))) %>%
   mutate(percentage = n*100/species)
 
-# evaluate taxonomic coverage: open tree of life
+# evaluate taxonomic coverage: open tree of life (OTL)
 # order-wise
 coverage.orders$species.otl <- NA
 for(o in 1:nrow(coverage.orders)){
@@ -924,14 +929,15 @@ write_csv(iBite.table.reduced_iBite.save.zenodo, "./iBite_table_for_zenodo_descr
 # get size range for main text
 range(iBite.table$body.l)
 
+# how many biting-chewing taxa?
+print(paste0("Biting-chewing insects psecies: ",
+             sum(biting.chewing %>% 
+                   filter(order != "non-biting insect", 
+                          order != "vertebrates") %>% 
+                   pull(species))))
+
 # get coverage numbers for main text
-print(paste0("orders: ", length(unique(iBite.table$order))))
-print(paste0("families: ", length(unique(iBite.table$family)))) 
-print(paste0("subfamilies: ", length(unique(iBite.table$subfamily))))
-print(paste0("genera: ", length(unique(iBite.table$genus))))
-print(paste0("species: ", length(unique(iBite.table$ID))))
-print(paste0("speciemens: ", length(unique(iBite.table$specimen))))
-print(paste0("measurements: ", length(unique(iBite.table$iBite))))
+print(measured_df)
 
 # save regression_df with statistics as CSV
 write_csv(regression_df, "./4_plots/regression_statistics.csv") 
@@ -957,7 +963,6 @@ for(i in 1:length(packages.needed)){
             version = curr_version,
             citation = curr_citation)
   print("************")
-
 }
 
 # save regression_df with statistics as CSV
