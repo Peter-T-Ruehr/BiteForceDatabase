@@ -2,7 +2,7 @@
 
 This repository contains the R code that was used to create the tables and figures of the article describing the insect bite force database published under
 
-Rühr et al. (**in review**): A bite force database of 655 insect species (preprint of earlier manuscript version available at [bioRxiv](https://doi.org/10.1101/2022.01.21.477193)).
+Rühr et al. (**in review**): A bite force database of 654 insect species (preprint of earlier manuscript version available at [bioRxiv](https://doi.org/10.1101/2022.01.21.477193)).
 
 ## Instructions
 
