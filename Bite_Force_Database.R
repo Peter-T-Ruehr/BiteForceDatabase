@@ -384,7 +384,7 @@ iBite.measurements.long <- iBite.measurements.long %>%
 write_csv(iBite.measurements.long %>% 
             select(iBite, specimen, ID, t, force) %>% 
             mutate(force = round(force, 6)),
-          "./iBite_force_measurements_combined.csv")
+          "./iBite_all_force_measurements_long.csv")
 
 # change negative Force values to positive values for log transformations
 iBite.measurements.long$force[iBite.measurements.long$force <= 0] <- 0.00000001
@@ -963,6 +963,14 @@ for(i in 1:length(packages.needed)){
             version = curr_version,
             citation = curr_citation)
   print("************")
+  if(i == length(packages.needed)){
+    R_version <- R.Version()
+    packages_df <- packages_df %>% 
+      add_row(package = "R", 
+              version = paste(R_version$major, R_version$minor, sep = "."),
+              citation = citation() %>%  
+                format(style = "text", .bibstyle = NULL))
+  }
 }
 
 # save regression_df with statistics as CSV
