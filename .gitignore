@@ -15,7 +15,6 @@ workspaces
 .Rdata
 .httr-oauth
 .DS_Store
-BiteForceDatabase.zip
-BiteForceDatabase.zip.tmp
-InsectBiteForceDatabase_v1.0.0.zip
+*.tmp
+*.zip
 iBite_all_force_measurements_long.csv
