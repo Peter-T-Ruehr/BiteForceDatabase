@@ -898,10 +898,15 @@ print(grid.arrange(p1.geographic.coverage, p1.climate.zone.coverage,
 # # save final iBite tibble as csv file
 iBite.table.reduced_iBite$latitude[iBite.table.reduced_iBite$latitude == 0] <- NA
 iBite.table.reduced_iBite$longitude[iBite.table.reduced_iBite$longitude == 0] <- NA
+
+# sort table for Zenodo
+orders_sorted <- c("Odonata", 
+                   "Dermaptera", "Orthoptera", "Mantophasmatodea", "Embioptera", "Phasmatodea", "Mantodea", "Blattodea",
+                   "Hymenoptera", "Raphidioptera", "Megaloptera", "Neuroptera", "Coleoptera")
 iBite.table.reduced_iBite.save <- iBite.table.reduced_iBite  %>%
   arrange(HemiHolo, infraclass, cohort, order, suborder, 
-          superfamily, family, subfamily, tribe, genus, species)
-
+          superfamily, family, subfamily, tribe, genus, species) %>% 
+  arrange(match(order, orders_sorted))
 
 # save table for Zenodo
 write_csv(iBite.table.reduced_iBite.save, "./iBite_table.csv")
