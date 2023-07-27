@@ -32,8 +32,8 @@
 
 plot_all_graphs = TRUE # TRUE FALSE
 # define path for plots
-# plot.path <- "./4_plots"
-plot.path <- "C:/Users/pruehr.EVOLUTION/Documents/4_plots" # <- in case saving in server folder kills R
+plot.path <- "./4_plots"
+# plot.path <- "C:/Users/pruehr.EVOLUTION/Documents/4_plots" # <- in case saving in server folder kills R
 
 
 # define package list that is needed to run this script
