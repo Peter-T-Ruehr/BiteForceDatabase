@@ -103,6 +103,22 @@ measured_df <- tibble(rank = "NA",
                       number = 10000,
                       .rows = 0)
 
+measured_df <- measured_df %>% 
+  add_row(rank = "orders",
+          number = length(unique(iBite.table$order))) %>% 
+  add_row(rank = "families",
+          number = length(unique(iBite.table$family))) %>% 
+  add_row(rank = "subfamilies",
+          number = length(unique(iBite.table$subfamily))) %>% 
+  add_row(rank = "genera",
+          number = length(unique(iBite.table$genus))) %>% 
+  add_row(rank = "species",
+          number = length(unique(iBite.table$ID))) %>% 
+  add_row(rank = "specimens",
+          number = length(unique(iBite.table$specimen))) %>% 
+  add_row(rank = "measurements",
+          number = length(unique(iBite.table$iBite)))
+
 
 # raw data plotting
 # load all raw measurements
@@ -806,14 +822,6 @@ iBite.table.climate.zone.bar <- iBite.table.reduced_iBite %>%
                                                       "Dwb"))) %>% 
   mutate(kgcI = factor(substring(climate.zone, 1, 1)))
 
-# print climate coverage for reporting
-for(c in unique(iBite.table.climate.zone.bar$kgcI)){
-  print(paste0(c, ": ", round(iBite.table.climate.zone.bar %>% 
-                                filter(kgcI == c) %>% 
-                                summarize(sum = sum(n.climate.zone)) %>% 
-                                pull(sum) * 100 /
-                                sum(iBite.table.climate.zone.bar$n.climate.zone), 1), "%."))
-}
 
 # plot climate coverage
 p1.climate.zone.coverage <- ggplot(data = iBite.table.climate.zone.bar, aes(x=climate.zone, y=n.climate.zone, fill = as.numeric(kgcI))) +
@@ -862,15 +870,6 @@ iBite.table.reduced_iBite.country.bar <- iBite.table.reduced_iBite %>%
   ungroup() %>% 
   arrange(desc(n.country)) %>% 
   mutate(country=factor(country, levels = country)) 
-
-# print country-wise coverage for reporting
-for(c in iBite.table.reduced_iBite.country.bar$country){
-  print(paste0(c, ": ", round(iBite.table.reduced_iBite.country.bar %>% 
-                                filter(country == c) %>% 
-                                pull(n.country) * 100 /
-                                sum(iBite.table.reduced_iBite.country.bar$n.country), 1), "%."))
-  
-}
 
 # # plot country-wise coverage
 p1.geographic.coverage <- ggplot(data = iBite.table.reduced_iBite.country.bar, aes(x=country, y=n.country, fill = n.country)) +
@@ -944,6 +943,24 @@ write_csv(regression_df, "./4_plots/regression_statistics.csv")
 
 # print anova results for main text
 print(anova_results)
+
+# print climate coverage for reporting
+for(c in unique(iBite.table.climate.zone.bar$kgcI)){
+  print(paste0(c, ": ", round(iBite.table.climate.zone.bar %>% 
+                                filter(kgcI == c) %>% 
+                                summarize(sum = sum(n.climate.zone)) %>% 
+                                pull(sum) * 100 /
+                                sum(iBite.table.climate.zone.bar$n.climate.zone), 1), "%."))
+}
+
+# print country-wise coverage for reporting
+for(c in iBite.table.reduced_iBite.country.bar$country){
+  print(paste0(c, ": ", round(iBite.table.reduced_iBite.country.bar %>% 
+                                filter(country == c) %>% 
+                                pull(n.country) * 100 /
+                                sum(iBite.table.reduced_iBite.country.bar$n.country), 1), "%."))
+  
+}
 
 # finally, print package versions and citations for all packages used:
 packages_df <- tibble(package = "NA",
